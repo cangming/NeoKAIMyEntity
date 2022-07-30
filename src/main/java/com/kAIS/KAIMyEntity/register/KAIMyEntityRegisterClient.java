@@ -11,11 +11,11 @@ import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.client.ClientRegistry;
 import net.minecraftforge.client.settings.KeyConflictContext;
 import net.minecraftforge.client.settings.KeyModifier;
 import net.minecraftforge.client.event.InputEvent;
 import net.minecraftforge.client.event.EntityRenderersEvent.RegisterRenderers;
+import net.minecraftforge.client.event.RegisterKeyMappingsEvent;
 import net.minecraftforge.fml.common.Mod;
 
 import net.minecraft.client.Minecraft;
@@ -37,8 +37,9 @@ public class KAIMyEntityRegisterClient {
 
     public static void Register() {
         RegisterRenderers RR = new RegisterRenderers();
+        RegisterKeyMappingsEvent RKE = new RegisterKeyMappingsEvent(Minecraft.getInstance().options);
         for (KeyMapping i : new KeyMapping[]{keyCustomAnim1, keyCustomAnim2, keyCustomAnim3, keyCustomAnim4, keyReloadModels, keyResetPhysics})
-            ClientRegistry.registerKeyBinding(i);
+            RKE.register(i);
 
         File[] modelDirs = new File(Minecraft.getInstance().gameDirectory, "KAIMyEntity").listFiles();
         if (modelDirs != null) {
@@ -58,7 +59,7 @@ public class KAIMyEntityRegisterClient {
 
     @OnlyIn(Dist.CLIENT)
     @SubscribeEvent
-    public static void onKeyPressed(InputEvent.KeyInputEvent event) {
+    public static void onKeyPressed(InputEvent.Key event) {
         if (keyCustomAnim1.isDown()) {
             MMDModelManager.Model m = MMDModelManager.GetPlayerModel("EntityPlayer_" + Minecraft.getInstance().player.getName().getString());
             if (m != null) {
