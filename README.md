@@ -29,14 +29,18 @@ OpenGLなんかチンプンカンプンで、なんならJavaのコードに触�
 │   ├── EntityPlayer
 │   │   ├── (テクスチャのファイルとかフォルダとか)
 │   │   ├── (あるのであればモデル専用のvmdファイル)
+│   │   ├── (あるのであれば)lightMap.png
 │   │   └── model.pmx(または model.pmd)
 │   ├── EntityPlayer_(Your Name)
 │   │   ├── (テクスチャのファイルとかフォルダとか)
 │   │   ├── (あるのであればモデル専用のvmdファイル)
+│   │   ├── (あるのであれば)lightMap.png
+│   │   ├── (あるのであれば)model.properties
 │   │   └── model.pmx(または model.pmd)
 │   ├── (":"を"."に変換したエンティティのID)
 │   │   ├── (テクスチャのファイルとかフォルダとか)
-│   │   ├── (4つのvmdファイル)
+│   │   ├── (5つのvmdファイル)
+│   │   ├── (あるのであれば)lightMap.png
 │   │   └── model.pmx(または model.pmd)
 │   └── Shader
 │       ├── MMDShader.fsh
