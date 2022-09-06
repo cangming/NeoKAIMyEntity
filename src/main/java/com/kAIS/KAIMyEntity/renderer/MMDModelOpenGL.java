@@ -149,6 +149,25 @@ public class MMDModelOpenGL implements IMMDModel {
         if (mgrTex != null) {
             lightMapMaterial.tex = mgrTex.tex;
             lightMapMaterial.hasAlpha = mgrTex.hasAlpha;
+        }else{
+            lightMapMaterial.tex = GL46C.glGenTextures();
+            GL46C.glBindTexture(GL46C.GL_TEXTURE_2D, lightMapMaterial.tex);
+            ByteBuffer texBuffer = ByteBuffer.allocateDirect(16*16*4);
+            texBuffer.order(ByteOrder.LITTLE_ENDIAN);
+            for(int i=0;i<16*16;i++){
+                texBuffer.put((byte) 255);
+                texBuffer.put((byte) 255);
+                texBuffer.put((byte) 255);
+                texBuffer.put((byte) 255);
+            }
+            texBuffer.flip();
+            GL46C.glTexImage2D(GL46C.GL_TEXTURE_2D, 0, GL46C.GL_RGBA, 16, 16, 0, GL46C.GL_RGBA, GL46C.GL_UNSIGNED_BYTE, texBuffer);
+
+            GL46C.glTexParameteri(GL46C.GL_TEXTURE_2D, GL46C.GL_TEXTURE_MAX_LEVEL, 0);
+            GL46C.glTexParameteri(GL46C.GL_TEXTURE_2D, GL46C.GL_TEXTURE_MIN_FILTER, GL46C.GL_LINEAR);
+            GL46C.glTexParameteri(GL46C.GL_TEXTURE_2D, GL46C.GL_TEXTURE_MAG_FILTER, GL46C.GL_LINEAR);
+            GL46C.glBindTexture(GL46C.GL_TEXTURE_2D, 0);
+            lightMapMaterial.hasAlpha = true;
         }
 
         for(int i=0; i<vertexCount; i++){
