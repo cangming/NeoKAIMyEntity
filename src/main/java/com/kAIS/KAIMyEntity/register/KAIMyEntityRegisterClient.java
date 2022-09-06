@@ -19,6 +19,7 @@ import net.minecraftforge.client.event.RegisterKeyMappingsEvent;
 import net.minecraftforge.fml.common.Mod;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.network.chat.Component;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.world.entity.EntityType;
 
@@ -34,11 +35,12 @@ public class KAIMyEntityRegisterClient {
     static KeyMapping keyCustomAnim4 = new KeyMapping("key.customAnim4", KeyConflictContext.IN_GAME, KeyModifier.NONE, InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_M, "key.title");
     static KeyMapping keyReloadModels = new KeyMapping("key.reloadModels", KeyConflictContext.IN_GAME, KeyModifier.NONE, InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_KP_1, "key.title");
     static KeyMapping keyResetPhysics = new KeyMapping("key.resetPhysics", KeyConflictContext.IN_GAME, KeyModifier.NONE, InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_K, "key.title");
+    static KeyMapping keyChangeProgram = new KeyMapping("key.changeProgram", KeyConflictContext.IN_GAME, KeyModifier.NONE, InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_KP_3, "key.title");
 
     public static void Register() {
         RegisterRenderers RR = new RegisterRenderers();
         RegisterKeyMappingsEvent RKE = new RegisterKeyMappingsEvent(Minecraft.getInstance().options);
-        for (KeyMapping i : new KeyMapping[]{keyCustomAnim1, keyCustomAnim2, keyCustomAnim3, keyCustomAnim4, keyReloadModels, keyResetPhysics})
+        for (KeyMapping i : new KeyMapping[]{keyCustomAnim1, keyCustomAnim2, keyCustomAnim3, keyCustomAnim4, keyReloadModels, keyResetPhysics, keyChangeProgram})
             RKE.register(i);
 
         File[] modelDirs = new File(Minecraft.getInstance().gameDirectory, "KAIMyEntity").listFiles();
@@ -102,6 +104,14 @@ public class KAIMyEntityRegisterClient {
                 assert Minecraft.getInstance().player != null;
                 KAIMyEntityRegisterCommon.channel.sendToServer(new KAIMyEntityNetworkPack(2, Minecraft.getInstance().player.getUUID(), 0));
             }
+        }
+        if (keyChangeProgram.isDown()) {
+            KAIMyEntity.usingMMDShader = 1 - KAIMyEntity.usingMMDShader;
+            
+            if(KAIMyEntity.usingMMDShader == 0)
+                Minecraft.getInstance().gui.getChat().addMessage(Component.literal("Default shader"));
+            if(KAIMyEntity.usingMMDShader == 1)
+                Minecraft.getInstance().gui.getChat().addMessage(Component.literal("MMDShader"));
         }
     }
 }

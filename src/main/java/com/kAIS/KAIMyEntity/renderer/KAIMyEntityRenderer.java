@@ -1,8 +1,10 @@
 package com.kAIS.KAIMyEntity.renderer;
 
+import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 
 import net.minecraft.client.renderer.culling.Frustum;
+import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider.Context;
@@ -40,6 +42,7 @@ public class KAIMyEntityRenderer<T extends Entity> extends EntityRenderer<T> {
         MMDModelManager.Model model = MMDModelManager.GetNotPlayerModel(modelName, animName);
         if (model != null) {
             poseStackIn.pushPose();
+            RenderSystem.setShader(GameRenderer::getRendertypeEntityCutoutNoCullShader);
             model.model.Render(entityIn, entityYaw, poseStackIn, packedLightIn);
             poseStackIn.popPose();
         }
