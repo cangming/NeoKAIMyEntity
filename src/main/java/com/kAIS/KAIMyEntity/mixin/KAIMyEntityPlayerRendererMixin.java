@@ -1,5 +1,6 @@
 package com.kAIS.KAIMyEntity.mixin;
 
+import com.kAIS.KAIMyEntity.KAIMyEntity;
 import com.kAIS.KAIMyEntity.NativeFunc;
 import com.kAIS.KAIMyEntity.renderer.IMMDModel;
 import com.kAIS.KAIMyEntity.renderer.MMDAnimManager;
@@ -44,8 +45,10 @@ public abstract class KAIMyEntityPlayerRendererMixin extends LivingEntityRendere
             model = m.model;
 
         MMDModelManager.ModelWithPlayerData mwpd = (MMDModelManager.ModelWithPlayerData) m;
-        if (mwpd != null)
-            mwpd.loadItemRotationProperties(false);
+        if (mwpd != null && KAIMyEntity.reloadProperties){
+            mwpd.loadModelProperties(KAIMyEntity.reloadProperties);
+            KAIMyEntity.reloadProperties = false;
+        }
         
         if (model != null) {
             if (!mwpd.playerData.playCustomAnim) {
@@ -95,6 +98,8 @@ public abstract class KAIMyEntityPlayerRendererMixin extends LivingEntityRendere
                 }
             }
 
+            float size = sizeOfModel(mwpd);
+            poseStackIn.scale(size, size, size);
             RenderSystem.setShader(GameRenderer::getRendertypeEntityTranslucentShader);
             model.Render(entityIn, entityYaw, poseStackIn, packedLightIn);
 
@@ -224,5 +229,12 @@ public abstract class KAIMyEntityPlayerRendererMixin extends LivingEntityRendere
         }
         
         return result;
+    }
+
+    float sizeOfModel(ModelWithPlayerData mwpd){
+        float size = 1.0f;
+        if(mwpd.properties.getProperty("size") != null)
+            size = Float.valueOf(mwpd.properties.getProperty("size"));
+        return size;
     }
 }

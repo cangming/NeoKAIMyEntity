@@ -22,6 +22,7 @@ import org.apache.logging.log4j.Logger;
 public class KAIMyEntity {
     public static Logger logger = LogManager.getLogger();
     public static int usingMMDShader = 0;
+    public static boolean reloadProperties = true;
 
     public KAIMyEntity() {
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::preInit);

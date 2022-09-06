@@ -129,15 +129,15 @@ public class MMDModelManager {
         public Properties properties = new Properties();
         boolean loadedProperties = false;
 
-        public void loadItemRotationProperties(boolean forceReload){
+        public void loadModelProperties(boolean forceReload){
             if (loadedProperties && !forceReload)
                 return;
-            String path2Properties = Minecraft.getInstance().gameDirectory.toString() + "/KAIMyEntity/" + modelName + "/itemRotation.properties";
+            String path2Properties = Minecraft.getInstance().gameDirectory.toString() + "/KAIMyEntity/" + modelName + "/model.properties";
             try {
                 InputStream istream = new FileInputStream(path2Properties);
                 properties.load(istream);
             } catch (IOException e) {
-                KAIMyEntity.logger.warn( "KAIMyEntity/" + modelName + "/itemRotation.properties not found" );
+                KAIMyEntity.logger.warn( "KAIMyEntity/" + modelName + "/model.properties not found" );
             }
             loadedProperties = true;
         } 

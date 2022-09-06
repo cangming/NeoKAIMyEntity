@@ -35,12 +35,13 @@ public class KAIMyEntityRegisterClient {
     static KeyMapping keyCustomAnim4 = new KeyMapping("key.customAnim4", KeyConflictContext.IN_GAME, KeyModifier.NONE, InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_M, "key.title");
     static KeyMapping keyReloadModels = new KeyMapping("key.reloadModels", KeyConflictContext.IN_GAME, KeyModifier.NONE, InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_KP_1, "key.title");
     static KeyMapping keyResetPhysics = new KeyMapping("key.resetPhysics", KeyConflictContext.IN_GAME, KeyModifier.NONE, InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_K, "key.title");
+    static KeyMapping keyReloadProperties = new KeyMapping("key.reloadProperties", KeyConflictContext.IN_GAME, KeyModifier.NONE, InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_KP_2, "key.title");
     static KeyMapping keyChangeProgram = new KeyMapping("key.changeProgram", KeyConflictContext.IN_GAME, KeyModifier.NONE, InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_KP_3, "key.title");
 
     public static void Register() {
         RegisterRenderers RR = new RegisterRenderers();
         RegisterKeyMappingsEvent RKE = new RegisterKeyMappingsEvent(Minecraft.getInstance().options);
-        for (KeyMapping i : new KeyMapping[]{keyCustomAnim1, keyCustomAnim2, keyCustomAnim3, keyCustomAnim4, keyReloadModels, keyResetPhysics, keyChangeProgram})
+        for (KeyMapping i : new KeyMapping[]{keyCustomAnim1, keyCustomAnim2, keyCustomAnim3, keyCustomAnim4, keyReloadModels, keyResetPhysics, keyReloadProperties, keyChangeProgram})
             RKE.register(i);
 
         File[] modelDirs = new File(Minecraft.getInstance().gameDirectory, "KAIMyEntity").listFiles();
@@ -104,6 +105,9 @@ public class KAIMyEntityRegisterClient {
                 assert Minecraft.getInstance().player != null;
                 KAIMyEntityRegisterCommon.channel.sendToServer(new KAIMyEntityNetworkPack(2, Minecraft.getInstance().player.getUUID(), 0));
             }
+        }
+        if (keyReloadProperties.isDown()) {
+            KAIMyEntity.reloadProperties = true;
         }
         if (keyChangeProgram.isDown()) {
             KAIMyEntity.usingMMDShader = 1 - KAIMyEntity.usingMMDShader;
