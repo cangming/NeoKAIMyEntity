@@ -30,7 +30,9 @@ public class KAIMyEntityRenderer<T extends Entity> extends EntityRenderer<T> {
     public void render(T entityIn, float entityYaw, float partialTicks, PoseStack poseStackIn, MultiBufferSource bufferIn, int packedLightIn) {
         super.render(entityIn, entityYaw, partialTicks, poseStackIn, bufferIn, packedLightIn);
         String animName;
-        if (entityIn.isVehicle()) {
+        if (entityIn.isVehicle() && (entityIn.getX() - entityIn.xOld != 0.0f || entityIn.getZ() - entityIn.zOld != 0.0f)) {
+            animName = "driven";
+        } else if (entityIn.isVehicle()) {
             animName = "ridden";
         } else if (entityIn.isSwimming()) {
             animName = "swim";
