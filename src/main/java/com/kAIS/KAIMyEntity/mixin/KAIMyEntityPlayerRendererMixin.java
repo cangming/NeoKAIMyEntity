@@ -93,7 +93,7 @@ public abstract class KAIMyEntityPlayerRendererMixin extends LivingEntityRendere
                     }else{
                         AnimStateChangeOnce(mwed, MMDModelManager.EntityData.EntityState.Ride, 0);
                     }
-                } else if (entityIn.isSwimming()) {
+                } else if (entityIn.isSwimming() || entityIn.isTouchingWater() || entityIn.isInLava() || entityIn.isSubmergedInWater() || entityIn.isInSwimmingPose()) {
                     AnimStateChangeOnce(mwed, MMDModelManager.EntityData.EntityState.Swim, 0);
                     bodyPitch = entityIn.getPitch() + swimmingPitch;
                     entityTrans = swimmingTrans;
