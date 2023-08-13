@@ -5,6 +5,7 @@ import com.kAIS.KAIMyEntity.NativeFunc;
 import com.kAIS.KAIMyEntity.renderer.IMMDModel;
 import com.kAIS.KAIMyEntity.renderer.MMDAnimManager;
 import com.kAIS.KAIMyEntity.renderer.MMDModelManager;
+import com.kAIS.KAIMyEntity.renderer.MMDModelManager.EntityData;
 import com.kAIS.KAIMyEntity.renderer.MMDModelManager.ModelWithEntityData;
 import com.mojang.blaze3d.systems.RenderSystem;
 
@@ -34,6 +35,9 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(PlayerEntityRenderer.class)
 public abstract class KAIMyEntityPlayerRendererMixin extends LivingEntityRenderer<AbstractClientPlayerEntity, PlayerEntityModel<AbstractClientPlayerEntity>> {
+
+    private boolean isJumpingOrFailing = false;
+    private double statJumpFailStartPosY = 0;
 
     public KAIMyEntityPlayerRendererMixin(EntityRendererFactory.Context ctx, PlayerEntityModel<AbstractClientPlayerEntity> model, float shadowRadius) {
         super(ctx, model, shadowRadius);
@@ -68,6 +72,7 @@ public abstract class KAIMyEntityPlayerRendererMixin extends LivingEntityRendere
         float crawlingPitch = mwed.properties.getProperty("crawlingPitch") == null ? 0.0f : Float.valueOf(mwed.properties.getProperty("crawlingPitch"));
         Vector3f crawlingTrans = mwed.properties.getProperty("crawlingTrans") == null ? new Vector3f(0.0f) : KAIMyEntityClient.str2Vec3f(mwed.properties.getProperty("crawlingTrans"));
         float[] size = sizeOfModel(mwed);
+        boolean isJumpingOrFailing = false;
 
         if (model != null) {
             if (!mwed.entityData.playCustomAnim) {
@@ -105,9 +110,7 @@ public abstract class KAIMyEntityPlayerRendererMixin extends LivingEntityRendere
                     }else{
                         AnimStateChangeOnce(mwed, MMDModelManager.EntityData.EntityState.OnClimbable, 0);
                     }
-                } else if (entityIn.isSprinting() && !entityIn.isSneaking()) {
-                    AnimStateChangeOnce(mwed, MMDModelManager.EntityData.EntityState.Sprint, 0);
-                } else if (entityIn.isCrawling()){
+                } else if (!(entityIn.isSprinting() && !entityIn.isSneaking()) && entityIn.isCrawling()){
                     if(entityIn.getX() - entityIn.prevX != 0.0f || entityIn.getZ() - entityIn.prevZ != 0.0f){
                         AnimStateChangeOnce(mwed, MMDModelManager.EntityData.EntityState.Crawl, 0);
                     }else {
@@ -115,11 +118,27 @@ public abstract class KAIMyEntityPlayerRendererMixin extends LivingEntityRendere
                     }
                     bodyPitch = crawlingPitch;
                     entityTrans = crawlingTrans;
+                } else if (entityIn.prevY - entityIn.getY() != 0.0f) {
+                    isJumpingOrFailing = true;
+                    if (!this.isJumpingOrFailing) {
+                        this.statJumpFailStartPosY = entityIn.prevY;
+                    }
+                    if (entityIn.getY() - this.statJumpFailStartPosY < -4.0f) {
+                        AnimStateChangeOnce(mwed, MMDModelManager.EntityData.EntityState.Fall, 0);
+                    } else if (entityIn.prevY > entityIn.getY()) {
+                        AnimStateChangeOnce(mwed, MMDModelManager.EntityData.EntityState.Flying, 0);
+                    } else {
+                        AnimStateChangeOnce(mwed, MMDModelManager.EntityData.EntityState.Jump, 0);
+                    }
+                } else if (entityIn.isSprinting() && !entityIn.isSneaking()) {
+                    AnimStateChangeOnce(mwed, MMDModelManager.EntityData.EntityState.Sprint, 0);
                 } else if (entityIn.getX() - entityIn.prevX != 0.0f || entityIn.getZ() - entityIn.prevZ != 0.0f) {
                     AnimStateChangeOnce(mwed, MMDModelManager.EntityData.EntityState.Walk, 0);
                 } else {
                     AnimStateChangeOnce(mwed, MMDModelManager.EntityData.EntityState.Idle, 0);
                 }
+
+                this.isJumpingOrFailing = isJumpingOrFailing;
 
                 //Layer 1
                 if(!entityIn.isUsingItem() && !entityIn.handSwinging || entityIn.isSleeping()){
