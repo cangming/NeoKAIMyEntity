@@ -33,11 +33,14 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+
 @Mixin(PlayerEntityRenderer.class)
 public abstract class KAIMyEntityPlayerRendererMixin extends LivingEntityRenderer<AbstractClientPlayerEntity, PlayerEntityModel<AbstractClientPlayerEntity>> {
 
     private boolean isJumpingOrFailing = false;
     private double statJumpFailStartPosY = 0;
+
+    private boolean isSwimming = false;
 
     public KAIMyEntityPlayerRendererMixin(EntityRendererFactory.Context ctx, PlayerEntityModel<AbstractClientPlayerEntity> model, float shadowRadius) {
         super(ctx, model, shadowRadius);
@@ -73,6 +76,7 @@ public abstract class KAIMyEntityPlayerRendererMixin extends LivingEntityRendere
         Vector3f crawlingTrans = mwed.properties.getProperty("crawlingTrans") == null ? new Vector3f(0.0f) : KAIMyEntityClient.str2Vec3f(mwed.properties.getProperty("crawlingTrans"));
         float[] size = sizeOfModel(mwed);
         boolean isJumpingOrFailing = false;
+        boolean isSwimming = false;
 
         if (model != null) {
             if (!mwed.entityData.playCustomAnim) {
@@ -87,11 +91,11 @@ public abstract class KAIMyEntityPlayerRendererMixin extends LivingEntityRendere
                     } else {
                         AnimStateChangeOnce(mwed, MMDModelManager.EntityData.EntityState.Fly, 0);
                     }
-                    bodyPitch = GetAdjustFlySwimPitch(entityIn, flyingPitch);
+                    bodyPitch = getAdjustFlySwimPitch(entityIn, flyingPitch);
                     entityTrans = flyingTrans;
                 } else if (entityIn.isFallFlying()) {
                     AnimStateChangeOnce(mwed, MMDModelManager.EntityData.EntityState.ElytraFly, 0);
-                    bodyPitch = GetAdjustFlySwimPitch(entityIn, flyingPitch);
+                    bodyPitch = getAdjustFlySwimPitch(entityIn, flyingPitch);
                     entityTrans = flyingTrans;
                 } else if (entityIn.isSleeping()) {
                     AnimStateChangeOnce(mwed, MMDModelManager.EntityData.EntityState.Sleep, 0);
@@ -108,10 +112,6 @@ public abstract class KAIMyEntityPlayerRendererMixin extends LivingEntityRendere
                     }else{
                         AnimStateChangeOnce(mwed, MMDModelManager.EntityData.EntityState.Ride, 0);
                     }
-                } else if (entityIn.isSwimming() || entityIn.isTouchingWater() || entityIn.isInLava() || entityIn.isSubmergedInWater() || entityIn.isInSwimmingPose()) {
-                    AnimStateChangeOnce(mwed, MMDModelManager.EntityData.EntityState.Swim, 0);
-                    bodyPitch = GetAdjustFlySwimPitch(entityIn, swimmingPitch);
-                    entityTrans = swimmingTrans;
                 } else if (entityIn.isClimbing()) {
                     if(entityIn.getY() - entityIn.prevY > 0){
                         AnimStateChangeOnce(mwed, MMDModelManager.EntityData.EntityState.OnClimbableUp, 0);
@@ -120,6 +120,12 @@ public abstract class KAIMyEntityPlayerRendererMixin extends LivingEntityRendere
                     }else{
                         AnimStateChangeOnce(mwed, MMDModelManager.EntityData.EntityState.OnClimbable, 0);
                     }
+                } else if (isInFluid(entityIn) || this.isSwimming) {
+                    isSwimming = isInFluid(entityIn) ||
+                        entityIn.getEntityWorld().getFluidState(entityIn.getBlockPos().down()).getHeight() > 0;
+                    AnimStateChangeOnce(mwed, MMDModelManager.EntityData.EntityState.Swim, 0);
+                    bodyPitch = getAdjustFlySwimPitch(entityIn, swimmingPitch);
+                    entityTrans = swimmingTrans;
                 } else if (!(entityIn.isSprinting() && !entityIn.isSneaking()) && entityIn.isCrawling()){
                     if(entityIn.getX() - entityIn.prevX != 0.0f || entityIn.getZ() - entityIn.prevZ != 0.0f) {
                         AnimStateChangeOnce(mwed, MMDModelManager.EntityData.EntityState.Crawl, 0);
@@ -149,6 +155,7 @@ public abstract class KAIMyEntityPlayerRendererMixin extends LivingEntityRendere
                 }
 
                 this.isJumpingOrFailing = isJumpingOrFailing;
+                this.isSwimming = isSwimming;
 
                 //Layer 1
                 if(!entityIn.isUsingItem() && !entityIn.handSwinging || entityIn.isSleeping()){
@@ -250,7 +257,15 @@ public abstract class KAIMyEntityPlayerRendererMixin extends LivingEntityRendere
         ci.cancel();//Added By FMyuchuan. | 隐藏模型脚下的史蒂夫
     }
 
-    float GetAdjustFlySwimPitch(AbstractClientPlayerEntity entityIn, float pitchOfset){
+    boolean isInFluid(AbstractClientPlayerEntity entityIn) {
+        return entityIn.isSwimming() ||
+                entityIn.isTouchingWater() ||
+                entityIn.isInLava() ||
+                entityIn.isSubmergedInWater() ||
+                entityIn.isInSwimmingPose();
+    }
+
+    float getAdjustFlySwimPitch(AbstractClientPlayerEntity entityIn, float pitchOfset) {
         float entityPitch = entityIn.getPitch();
         entityPitch = entityPitch > 100.0f ? 100.0f : entityPitch;
         entityPitch = entityPitch < -30.0f ? -30.0f : entityPitch;
