@@ -28,7 +28,7 @@ import org.joml.Vector3f;
 
 public class KAIMyEntityClient implements ClientModInitializer {
     public static final Logger logger = LogManager.getLogger();
-    public static int usingMMDShader = 0;
+    public static int usingMMDShader = 1;
     public static boolean reloadProperties = false;
     static String gameDirectory = MinecraftClient.getInstance().runDirectory.getAbsolutePath();
     static final int BUFFER = 512;
