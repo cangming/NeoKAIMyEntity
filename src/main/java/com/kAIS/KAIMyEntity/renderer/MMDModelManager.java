@@ -24,7 +24,7 @@ public class MMDModelManager {
 
     public static IMMDModel LoadModel(String modelName, long layerCount) {
         //Model path
-        File modelDir = new File(gameDirectory + "/KAIMyEntity/" + modelName);
+        File modelDir = new File(gameDirectory + "/mods/KAIMyEntity/" + modelName);
         String modelDirStr = modelDir.getAbsolutePath();
 
         String modelFilenameStr;
@@ -104,12 +104,12 @@ public class MMDModelManager {
         public void loadModelProperties(boolean forceReload){
             if (isPropertiesLoaded && !forceReload)
                 return;
-            String path2Properties = gameDirectory + "/KAIMyEntity/" + modelName + "/model.properties";
+            String path2Properties = gameDirectory + "/mods/KAIMyEntity/" + modelName + "/model.properties";
             try {
                 InputStream istream = new FileInputStream(path2Properties);
                 properties.load(istream);
             } catch (IOException e) {
-                KAIMyEntityClient.logger.warn( "KAIMyEntity/" + modelName + "/model.properties not found" );
+                KAIMyEntityClient.logger.warn( "/mods/KAIMyEntity/" + modelName + "/model.properties not found" );
             }
             isPropertiesLoaded = true;
             KAIMyEntityClient.reloadProperties = false;

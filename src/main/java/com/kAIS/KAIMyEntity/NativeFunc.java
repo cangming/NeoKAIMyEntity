@@ -10,18 +10,11 @@ import java.nio.ByteBuffer;
 import java.util.HashMap;
 
 public class NativeFunc {
-    private static final String RuntimePath = new File(System.getProperty("java.home")).getParent();
-    private static final String gameDirectory = MinecraftClient.getInstance().runDirectory.getAbsolutePath();
-    private static final boolean isAndroid = new File("/system/build.prop").exists();
-    private static final boolean isLinux = System.getProperty("os.name").toLowerCase().contains("linux");
-    private static final boolean isWindows = System.getProperty("os.name").toLowerCase().contains("windows");
-    private static final HashMap<runtimeUrlRes, String> urlMap = new HashMap<runtimeUrlRes, String>() {
-        {
-            put(runtimeUrlRes.windows, "https://github.com/Gengorou-C/KAIMyEntitySaba/releases/download/20221215/KAIMyEntitySaba.dll");
-            put(runtimeUrlRes.android_arch64, "https://github.com.cnpmjs.org/asuka-mio/KAIMyEntitySaba/releases/download/crossplatform/KAIMyEntitySaba.so");
-            put(runtimeUrlRes.android_arch64_libc, "https://github.com.cnpmjs.org/asuka-mio/KAIMyEntitySaba/releases/download/crossplatform/libc++_shared.so");
-        }
-    };
+    public static final String RuntimePath = new File(System.getProperty("java.home")).getParent();
+    public static final String gameDirectory = MinecraftClient.getInstance().runDirectory.getAbsolutePath();
+    public static final boolean isAndroid = new File("/system/build.prop").exists();
+    public static final boolean isLinux = System.getProperty("os.name").toLowerCase().contains("linux");
+    public static final boolean isWindows = System.getProperty("os.name").toLowerCase().contains("windows");
     static NativeFunc inst;
 
     public static NativeFunc GetInst() {
@@ -30,44 +23,6 @@ public class NativeFunc {
             inst.Init();
         }
         return inst;
-    }
-
-    private void DownloadSingleFile(URL url, File file) throws IOException {
-        if (file.exists()) {
-            try {
-                System.load(file.getAbsolutePath());
-                return; //File exist and loadable
-            } catch (Error e) {
-                KAIMyEntityClient.logger.info("\"" + file.getAbsolutePath() + "\" broken! Trying recover it!");
-            }
-        }
-        try {
-            file.delete();
-            file.createNewFile();
-            FileUtils.copyURLToFile(url, file, 30000, 30000);
-            System.load(file.getAbsolutePath());
-        } catch (IOException e) {
-            file.delete();
-            KAIMyEntityClient.logger.info("Download \"" + url.getPath() + "\" failed!");
-            KAIMyEntityClient.logger.info("Cannot download runtime!");
-            KAIMyEntityClient.logger.info("Check you internet connection and restart game!");
-            e.printStackTrace();
-            throw e;
-        }
-    }
-
-    private void DownloadRuntime() throws Exception {
-        if (isWindows) {
-            DownloadSingleFile(new URL(urlMap.get(runtimeUrlRes.windows)), new File(gameDirectory, "KAIMyEntitySaba.dll"));
-        }
-        if (isLinux && !isAndroid) {
-            KAIMyEntityClient.logger.info("Not support!");
-            throw new Error();
-        }
-        if (isLinux && isAndroid) {
-            DownloadSingleFile(new URL(urlMap.get(runtimeUrlRes.android_arch64_libc)), new File(RuntimePath, "libc++_shared.so"));
-            DownloadSingleFile(new URL(urlMap.get(runtimeUrlRes.android_arch64)), new File(RuntimePath, "KAIMyEntitySaba.so"));
-        }
     }
 
     private void LoadLibrary(File file) {
@@ -83,11 +38,11 @@ public class NativeFunc {
         try {
             if (isWindows) {
                 KAIMyEntityClient.logger.info("Win32 Env Detected!");
-                LoadLibrary(new File(gameDirectory, "KAIMyEntitySaba.dll"));//WIN32
+                LoadLibrary(new File(gameDirectory + "/mods/KAIMyEntity/lib/KAIMyEntitySaba.dll"));//WIN32
             }
             if (isLinux && !isAndroid) {
                 KAIMyEntityClient.logger.info("Linux Env Detected!");
-                LoadLibrary(new File(gameDirectory, "KAIMyEntitySaba.so"));//Linux
+                LoadLibrary(new File(gameDirectory, "/mods/KAIMyEntity/lib/KAIMyEntitySaba.so"));//Linux
             }
             if (isLinux && isAndroid) {
                 KAIMyEntityClient.logger.info("Android Env Detected!");
@@ -95,11 +50,7 @@ public class NativeFunc {
                 LoadLibrary(new File(RuntimePath, "KAIMyEntitySaba.so"));//Android
             }
         } catch (Error e) {
-            try {
-                DownloadRuntime();
-            } catch (Exception ex) {
-                throw e;
-            }
+            throw e;
         }
     }
 

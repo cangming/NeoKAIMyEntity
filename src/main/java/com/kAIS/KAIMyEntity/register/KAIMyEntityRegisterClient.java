@@ -73,10 +73,14 @@ public class KAIMyEntityRegisterClient {
             }
         });
 
-        File[] modelDirs = new File(MCinstance.runDirectory, "KAIMyEntity").listFiles();
+        File[] modelDirs = new File(MCinstance.runDirectory, "mods/KAIMyEntity").listFiles();
         if (modelDirs != null) {
             for (File i : modelDirs) {
-                if (!i.getName().startsWith("EntityPlayer") && !i.getName().equals("DefaultAnim") && !i.getName().equals("Shader")) {
+                if (!i.getName().startsWith("EntityPlayer") &&
+                        !i.getName().equals("DefaultAnime") &&
+                        !i.getName().equals("DefaultShader") &&
+                        !i.getName().equals("lib") &&
+                        !i.getName().equals("meta.version")) {
                     String mcEntityName = i.getName().replace('.', ':');
                     if (EntityType.get(mcEntityName).isPresent())
                         EntityRendererRegistry.register(EntityType.get(mcEntityName).get(), new KAIMyEntityRenderFactory<>(mcEntityName));

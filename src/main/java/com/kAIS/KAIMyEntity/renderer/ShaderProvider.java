@@ -9,8 +9,8 @@ import java.io.FileInputStream;
 public class ShaderProvider {
     private static boolean isInited = false;
     private static int program = 0;
-    private static final String vertexPath = MinecraftClient.getInstance().runDirectory.getAbsolutePath() + "/KAIMyEntity/Shader/MMDShader.vsh";
-    private static final String fragPath = MinecraftClient.getInstance().runDirectory.getAbsolutePath() + "/KAIMyEntity/Shader/MMDShader.fsh";
+    private static final String vertexPath = MinecraftClient.getInstance().runDirectory.getAbsolutePath() + "/mods/KAIMyEntity/DefaultShader/MMDShader.vsh";
+    private static final String fragPath = MinecraftClient.getInstance().runDirectory.getAbsolutePath() + "/mods/KAIMyEntity/DefaultShader/MMDShader.fsh";
 
     public static void Init() {
         if (!isInited) {

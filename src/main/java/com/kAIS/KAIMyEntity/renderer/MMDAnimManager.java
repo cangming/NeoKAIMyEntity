@@ -13,7 +13,7 @@ public class MMDAnimManager {
     static NativeFunc nf;
     static Map<String, Long> animStatic;
     static Map<IMMDModel, Map<String, Long>> animModel;
-    static String defaultAnimDir = new File(MinecraftClient.getInstance().runDirectory, "KAIMyEntity/DefaultAnim").getAbsolutePath();
+    static String defaultAnimDir = new File(MinecraftClient.getInstance().runDirectory, "mods/KAIMyEntity/DefaultAnime").getAbsolutePath();
 
     public static void Init() {
         nf = NativeFunc.GetInst();
