@@ -5,24 +5,34 @@ import net.minecraft.client.MinecraftClient;
 import org.lwjgl.opengl.GL46C;
 
 import java.io.FileInputStream;
+import java.io.File;
 
 public class ShaderProvider {
     private static boolean isInited = false;
     private static int program = 0;
-    private static final String vertexPath = MinecraftClient.getInstance().runDirectory.getAbsolutePath() + "/mods/KAIMyEntity/DefaultShader/MMDShader.vsh";
-    private static final String fragPath = MinecraftClient.getInstance().runDirectory.getAbsolutePath() + "/mods/KAIMyEntity/DefaultShader/MMDShader.fsh";
+    private static MinecraftClient MCinstance = MinecraftClient.getInstance();
+    private static final String defaultVertexPath = MCinstance.runDirectory.getAbsolutePath() + "/mods/KAIMyEntity/DefaultShader/MMDShader.vsh";
+    private static final String defaultFragPath = MCinstance.runDirectory.getAbsolutePath() + "/mods/KAIMyEntity/DefaultShader/MMDShader.fsh";
+    private static final String vertexPath = MCinstance.runDirectory.getAbsolutePath() + "/mods/KAIMyEntity/EntityPlayer_" + MCinstance.player.getName().getString() + "/MMDShader.vsh";
+    private static final String fragPath = MCinstance.runDirectory.getAbsolutePath() + "/mods/KAIMyEntity/EntityPlayer_" + MCinstance.player.getName().getString() + "/MMDShader.fsh";
 
     public static void Init() {
         if (!isInited) {
             try {
                 int vertexShader = GL46C.glCreateShader(GL46C.GL_VERTEX_SHADER);
-                try (FileInputStream vertexSource = new FileInputStream(vertexPath)) {
+                File fVertex = new File(vertexPath);
+                try (FileInputStream vertexSource = new FileInputStream(fVertex.exists() ? vertexPath : defaultVertexPath)) {
                     GL46C.glShaderSource(vertexShader, new String(vertexSource.readAllBytes()));
+                } catch (Exception e) {
+                    KAIMyEntityClient.logger.error("Vertex shader load fail, " + e.getMessage());
                 }
 
                 int fragShader = GL46C.glCreateShader(GL46C.GL_FRAGMENT_SHADER);
-                try (FileInputStream fragSource = new FileInputStream(fragPath)) {
+                File fFrag = new File(fragPath);
+                try (FileInputStream fragSource = new FileInputStream(fFrag.exists() ? fragPath : defaultFragPath)) {
                     GL46C.glShaderSource(fragShader, new String(fragSource.readAllBytes()));
+                } catch (Exception e) {
+                    KAIMyEntityClient.logger.error("Frag shader load fail, " + e.getMessage());
                 }
 
                 GL46C.glCompileShader(vertexShader);
