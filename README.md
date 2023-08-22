@@ -10,6 +10,7 @@ Thanks for the authors for their contribution to the original projects.
 ## How to use
 
 ### What you need to prepare
+* All files needed except for Minecraft fabrica and model file are builtin in the mod jar file.
 
 #### indispensable
 * Minecraft fabric mod
@@ -30,16 +31,16 @@ Thanks for the authors for their contribution to the original projects.
 
 ### Installation
 
-(1) Download appropriate jar file, and put it in mods folder.  
-(2) Run minecraft.  
-(3) If KAIMyEntity folder does't exist in Game directory, this mod will download a ZIP file and extract it.  
-(4) If KAIMyEntitySaba.dll does't exist in Game directory, it will be downloaded.  
-(5) Open KAIMyEntity folder, and copy and paste EntityPlayer folder.  
-(6) Rename the copied EntityPlayer folder "EntityPlayer_(YourName)".  
- (e.g.) "EntityPlayer_Gengorou-C"  
-(7) Put 3D model files in EntityPlayer_(YourName) folder.  
-(8) Rename the 3D model file "model.pmx" (or "model.pmd").  
-(9) Select world, and start the game.
+1. Download appropriate jar file, and put it in mods folder.  
+2. Run minecraft.  
+3. KAIMyEntity folder will be create and update content, e.g. shader, if needed.
+4. Overwrite DefaultAnim folder to ensure all motion exists and updated. You need to place you own custom motion file under your model folder.
+4. KAIMyEntitySaba.dll will be updated if needed.
+5. Open KAIMyEntity folder, and copy and paste EntityPlayer folder.  
+6. Rename the copied EntityPlayer folder "EntityPlayer_(YourName)", e.g. "EntityPlayer_Gengorou-C"  
+7. Put 3D model files in EntityPlayer_(YourName) folder.  
+8. Rename the 3D model file "model.pmx" (or "model.pmd").  
+9. Select world, and start the game.
 
 ### Exmaple of directory tree
 
